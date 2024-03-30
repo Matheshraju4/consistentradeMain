@@ -5,7 +5,7 @@ import { AutoCompoundingCal } from "./routes/AutocompundingCal";
 import { Dashboard } from "./routes/Dashboard";
 
 import { CardWithForm } from "./components/ui/Maincard";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Signin } from "./routes/Signin";
 import { Signup } from "./routes/Signup";
 
