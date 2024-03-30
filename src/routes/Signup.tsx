@@ -21,7 +21,7 @@ export function Signup() {
       })
       .then((res) => {
         if (res.data.message === "User Created Successfully") {
-          navigate("/dashboard"); // Navigate to the dashboard
+          navigate("/signin");
         }
       });
   }
