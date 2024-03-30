@@ -24,13 +24,33 @@ export function AutoCompoundingCal() {
   const perDayInterests = useRecoilValue(interest);
   const numberofDaysvalue = useRecoilValue(dateatom);
   const [data, setdata] = useState([]);
-
+  const [totalprofit, settotalprofit] = useState([]);
   function specificdata(index: number) {
     let currentdate = new Date();
     let date = new Date(currentdate);
     date.setDate(currentdate.getDate() + index);
     return date;
   }
+  useEffect(() => {
+    async function fetchdata1() {
+      const response = await axios.post(
+        DatabaseUrl + "/dashboard",
+        {
+          principalAmount: 1000,
+          perDayInterest: 0.01,
+          numberofDays: 365,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token") || "",
+          },
+        }
+      );
+
+      settotalprofit(response.data.message);
+    }
+    fetchdata1();
+  }, []);
   useEffect(() => {
     async function fetchdata() {
       const response = await axios.post(
@@ -77,13 +97,41 @@ export function AutoCompoundingCal() {
   }
   return (
     <>
-      <Table>
+      {totalprofit.length ? navigate("/dashboard") : ""}
+      <nav className="bg-white mb-10 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <div>
+            <h1 className="text-3xl font-semibold">ConsistentTrade</h1>
+          </div>
+          <div className="text-2xl bg-slate-300 p-3 border rounded">
+            Final amount: ${parseInt(maindata[maindata.length - 1])}
+          </div>
+          <div>
+            <Button
+              className="bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                navigate("/createtrade");
+              }}
+            >
+              Back
+            </Button>
+            <Button className="ml-2 " onClick={sendreq}>
+              Make Challenge --{">"}
+            </Button>
+          </div>
+        </div>
+      </nav>
+      <Table className="mt-20">
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px] text-xl">Date</TableHead>
-            <TableHead className="text-right text-xl ">Target</TableHead>
-            <TableHead className="text-right text-xl">Balance</TableHead>
+            <TableHead className="w-[100px] font-bold  text-xl">Date</TableHead>
+            <TableHead className="text-right font-bold text-xl ">
+              Target
+            </TableHead>
+            <TableHead className="text-right font-bold text-xl">
+              Balance
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -114,7 +162,6 @@ export function AutoCompoundingCal() {
           </TableRow>
         </TableFooter>
       </Table>
-      <Button onClick={sendreq}>Send</Button>
     </>
   );
 }

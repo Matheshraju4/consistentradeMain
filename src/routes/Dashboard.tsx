@@ -13,6 +13,7 @@ import { Header } from "@/Generalcomponents/Header";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { DatabaseUrl } from "@/Generalcomponents/DatabaseUrl";
+import { useNavigate } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 interface datainterface {
@@ -23,6 +24,7 @@ interface datainterface {
 }
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [initialinvestment, setinitialinvestment] = useState(0);
   const [finalTarget, setfinalTarget] = useState(0);
   const [totalprofit, settotalprofit] = useState(0);
@@ -32,7 +34,7 @@ export function Dashboard() {
   todaydate.setHours(-d);
   const responsedate = new Date();
   responsedate.setHours(main_date.getHours() + 24);
-  console.log("tadaydtae", todaydate);
+
   const [data, setdata] = useState<datainterface[]>([]);
   async function setRequest(e: number, iswon: Boolean, date: string) {
     if (new Date(date).getTime() < responsedate.getTime()) {
@@ -71,6 +73,7 @@ export function Dashboard() {
       );
 
       setdata(response.data.message);
+      console.log("this is data", response.data.message);
       settotalprofit(response.data.profit);
       setfinalTarget(response.data.finalTarget);
       setinitialinvestment(response.data.initialInvestment);
@@ -80,70 +83,90 @@ export function Dashboard() {
   console.log("this is data", data);
   return (
     <>
-      <Header
-        initialInvestment={initialinvestment}
-        finalTarget={finalTarget}
-        totalprofit={totalprofit}
-      />
-      <br />
-      <div className=" grid grid-cols-2  gap-2 md:grid md:grid-cols-4 md:gap-4  ">
-        {data.map((d, index) =>
-          new Date(d.date).getTime() < responsedate.getTime() &&
-          d.iswon !== null ? (
-            <Card>
-              <img
-                src={d.iswon === true ? winning : lossing}
-                className=" w-32 grid content-center p-2 m-auto m-5 rounded-full"
-              />
-              <CardFooter className="float-right text-xs">
-                <p className="float-right">{d.date}</p>
-              </CardFooter>
-            </Card>
-          ) : (
-            <Card
-              key={index}
-              className={
-                new Date(d.date).getTime() > responsedate.getTime()
-                  ? "bg-slate-100"
-                  : ""
-              }
+      <nav className="bg-white mb-20 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <div>
+            <h1 className="text-3xl font-semibold">ConsistentTrade</h1>
+          </div>
+          <div>
+            <Button
+              onClick={() => {
+                localStorage.removeItem("token");
+                navigate("/signin");
+                window.location.reload();
+              }}
             >
-              <CardHeader>
-                <CardTitle>{d.perdaytarget}</CardTitle>
-                <CardDescription> Target</CardDescription>
-              </CardHeader>
+              Logout
+            </Button>
+          </div>
+        </div>
+      </nav>
+      <div className="mt-10">
+        <Header
+          initialInvestment={initialinvestment}
+          finalTarget={finalTarget}
+          totalprofit={totalprofit}
+        />
+        <br />
+        <div className=" grid grid-cols-2  gap-2 md:grid md:grid-cols-4 md:gap-4  ">
+          {data.map((d, index) =>
+            new Date(d.date).getTime() < responsedate.getTime() &&
+            d.iswon !== null ? (
+              <Card>
+                <img
+                  src={d.iswon === true ? winning : lossing}
+                  className=" w-32 grid content-center p-2 m-auto m-5 rounded-full"
+                />
+                <CardFooter className="float-right text-xs">
+                  <p className="float-right">{d.date}</p>
+                </CardFooter>
+              </Card>
+            ) : (
+              <Card
+                key={index}
+                className={
+                  new Date(d.date).getTime() > responsedate.getTime()
+                    ? "bg-slate-100"
+                    : ""
+                }
+              >
+                <CardHeader>
+                  <CardTitle>{d.perdaytarget}</CardTitle>
+                  <CardDescription> Target</CardDescription>
+                </CardHeader>
 
-              <CardContent className="space-y-[5px]">
-                <Button
-                  id={`${index.toString()}_true`}
-                  className={
-                    new Date(d.date).getTime() > responsedate.getTime()
-                      ? "ps-8 pe-8  md:me-2"
-                      : "bg-green-400 ps-8 pe-8 md:me-2 "
-                  }
-                  onClick={() => setRequest(index, true, d.date)}
-                >
-                  Won
-                </Button>
-                <Button
-                  id={`${index.toString()}_false`}
-                  className={
-                    new Date(d.date).getTime() > responsedate.getTime()
-                      ? ""
-                      : "bg-red-400  "
-                  }
-                  onClick={() => setRequest(index, false, d.date)}
-                >
-                  Loss
-                </Button>
-              </CardContent>
+                <CardContent className="space-y-[5px]">
+                  <Button
+                    id={`${index.toString()}_true`}
+                    className={
+                      new Date(d.date).getTime() > responsedate.getTime()
+                        ? "ps-8 pe-8  md:me-2"
+                        : "bg-green-400 ps-8 pe-8 md:me-2 "
+                    }
+                    onClick={() => setRequest(index, true, d.date)}
+                  >
+                    Won
+                  </Button>
+                  <Button
+                    id={`${index.toString()}_false`}
+                    className={
+                      new Date(d.date).getTime() > responsedate.getTime()
+                        ? ""
+                        : "bg-red-400  "
+                    }
+                    onClick={() => setRequest(index, false, d.date)}
+                  >
+                    Loss
+                  </Button>
+                </CardContent>
 
-              <CardFooter className="float-right text-xs">
-                <p className="float-right">{d.date}</p>
-              </CardFooter>
-            </Card>
-          )
-        )}{" "}
+                <CardFooter className="float-right text-xs">
+                  <p className="float-right">{d.date}</p>
+                </CardFooter>
+              </Card>
+            )
+          )}{" "}
+        </div>
       </div>
     </>
   );

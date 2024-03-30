@@ -16,7 +16,7 @@ export function Signin() {
       })
       .then((res) => {
         localStorage.setItem("token", res.data.token);
-        navigate("/");
+        navigate("/createtrade");
       });
   }
   return (
