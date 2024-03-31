@@ -110,7 +110,7 @@ export function CardWithForm() {
                   ref={interestRef}
                   id="name"
                   type="number"
-                  placeholder="Enter the Per Day Interest "
+                  placeholder="Enter Per Day Interest E.g. 0.01 for 1%"
                   onChange={setinterest}
                 />
                 <label>Enter Number of days</label>

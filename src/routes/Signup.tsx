@@ -21,6 +21,11 @@ export function Signup() {
       })
       .then((res) => {
         if (res.data.message === "User Created Successfully") {
+          const showAlert = () => {
+            alert("Check Your Email To Verify Your Account");
+          };
+          showAlert();
+          setTimeout(() => {}, 1000);
           navigate("/signin");
         }
       });

@@ -15,8 +15,15 @@ export function Signin() {
         password,
       })
       .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        navigate("/createtrade");
+        if (res.data.token == undefined) {
+          const showAlert = () => {
+            alert("Check Your Email To Verify Your Account");
+          };
+          showAlert();
+        } else {
+          localStorage.setItem("token", res.data.token);
+          navigate("/createtrade");
+        }
       });
   }
   return (
